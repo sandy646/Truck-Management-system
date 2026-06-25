@@ -1,0 +1,43 @@
+sequenceDiagram
+    actor Owner as Trucking Owner
+    participant Web as Web App
+    participant Backend as Backend App
+    participant Storage as File Storage
+    participant PDF as PDF Processor
+    participant DB as Database
+
+    Owner->>Web: Upload load PDF
+    Web->>Backend: POST /loads/documents/upload
+
+    Backend->>Backend: Validate owner authentication and role
+
+    Backend->>Storage: Upload PDF file
+    Storage-->>Backend: Return file_url
+
+    Backend->>DB: Insert document with PROCESSING status
+    DB-->>Backend: Return document_id
+
+    Backend->>PDF: Process load document using file_url
+    PDF-->>Backend: Return extracted load data
+
+    Backend->>Backend: Validate extracted fields
+
+    Backend->>DB: Update document with extracted_data and PENDING_OWNER_REVIEW
+    DB-->>Backend: Document updated
+
+    Backend-->>Web: Return extracted data for review
+    Web-->>Owner: Show extracted data with editable fields
+
+    Owner->>Web: Review/edit extracted fields and click Approve
+    Web->>Backend: POST /loads/documents/{documentId}/approve
+
+    Backend->>Backend: Validate owner-approved load data
+
+    Backend->>DB: Insert load using approved data
+    DB-->>Backend: Return load_id
+
+    Backend->>DB: Update document with load_id and APPROVED status
+    DB-->>Backend: Document updated
+
+    Backend-->>Web: Return load created successfully
+    Web-->>Owner: Show created load

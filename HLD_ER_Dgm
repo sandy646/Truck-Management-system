@@ -1,0 +1,16 @@
+flowchart LR
+    User[Client / User<br/>Owner or Driver] -->|Upload load PDF / expense receipt| WebApp[Main App<br/>Web Interface]
+
+    WebApp -->|Send request to backend API| Backend[Backend App<br/>Business Logic + APIs]
+
+    Backend -->|Send PDF for extraction| PDFProcessor[PDF Processor<br/>OCR + Data Extraction]
+
+    PDFProcessor -->|Return extracted load / expense data| Backend
+
+    Backend -->|Save extracted data| DB[(Database)]
+
+    Backend -->|Fetch saved loads, expenses, profit data| DB
+
+    Backend -->|Return response| WebApp
+
+    WebApp -->|Show extracted info / status / profit| User

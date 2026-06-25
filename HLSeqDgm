@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant User as Client/User
+    participant App as Main App
+    participant PDF as PDF Processor
+    participant DB as Database
+
+    User->>App: Upload load PDF or expense receipt
+    App->>PDF: Send PDF for extraction
+    PDF-->>App: Return extracted data
+    App->>DB: Save document + extracted fields
+    DB-->>App: Save confirmation
+    App-->>User: Show extracted data / upload status
